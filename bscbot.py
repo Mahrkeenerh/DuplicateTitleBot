@@ -84,8 +84,13 @@ def load():
 
     global data_dict
 
-    with open("data.json") as json_file:
-        data_dict = json.load(json_file)
+    try:
+        with open("data.json") as json_file:
+            data_dict = json.load(json_file)
+
+    except FileNotFoundError:
+        save()
+        load()
 
 
 # save lists
@@ -107,8 +112,13 @@ def save_time():
 # load last known time
 def load_time():
 
-    with open("time.txt") as file:
-        return datetime.datetime.strptime(file.readline().strip(), '%y.%m.%d %H:%M:%S')
+    try:
+        with open("time.txt") as file:
+            return datetime.datetime.strptime(file.readline().strip(), '%y.%m.%d %H:%M:%S')
+
+    except FileNotFoundError:
+        save_time()
+        return load_time()
      
 
 # compare strings
