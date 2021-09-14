@@ -120,11 +120,12 @@ while True:
 
                 duplicate, link = is_duplicate(submission, submission_time)
                 if duplicate:
-                    submission.reply("Your post has been removed, because it has been marked as a duplicate of: https://www.reddit.com%s\n\nTo prevent spam, you can only post once per day.\n\nThis action was performed automatically." % link)
-                    submission.delete()
+                    # submission.reply("Your post has been removed, because it has been marked as a duplicate of: https://www.reddit.com%s\n\nTo prevent spam, you can only post once per day.\n\nThis action was performed automatically." % link)
+                    # submission.delete()
+                    print("DUP")
                 
                 else:
-                    data_dict[submission.title] = {"time": datetime.datetime.now().strftime('%y.%m.%d %H:%M:%S'), "link": submission.permalink}
+                    data_dict[submission.title] = {"time": submission_time.strftime('%y.%m.%d %H:%M:%S'), "link": submission.permalink}
                 
                 save()
                 save_time()
