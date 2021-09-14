@@ -1,4 +1,4 @@
-import praw, datetime, sys, json, traceback, Levenshtein
+import praw, datetime, sys, json, traceback, numpy
 from time import sleep
 from dateutil.relativedelta import relativedelta
 
@@ -23,6 +23,40 @@ with open("config.json") as config_file:
 
 
 data_dict = {}
+
+
+# https://blog.paperspace.com/implementing-levenshtein-distance-word-autocomplete-autocorrect/
+def levenshtein(token1, token2):
+
+    distances = numpy.zeros((len(token1) + 1, len(token2) + 1))
+
+    for t1 in range(len(token1) + 1):
+        distances[t1][0] = t1
+
+    for t2 in range(len(token2) + 1):
+        distances[0][t2] = t2
+
+    a = 0
+    b = 0
+    c = 0
+
+    for t1 in range(1, len(token1) + 1):
+        for t2 in range(1, len(token2) + 1):
+            if (token1[t1-1] == token2[t2-1]):
+                distances[t1][t2] = distances[t1 - 1][t2 - 1]
+            else:
+                a = distances[t1][t2 - 1]
+                b = distances[t1 - 1][t2]
+                c = distances[t1 - 1][t2 - 1]
+
+                if (a <= b and a <= c):
+                    distances[t1][t2] = a + 1
+                elif (b <= a and b <= c):
+                    distances[t1][t2] = b + 1
+                else:
+                    distances[t1][t2] = c + 1
+
+    return int(distances[len(token1)][len(token2)])
 
 
 # logger for errors
@@ -82,7 +116,7 @@ def is_similar(str_1, str_2):
 
     global similarity
 
-    distance = Levenshtein.distance(str(str_1).lower(), str(str_2).lower())
+    distance = levenshtein(str(str_1).lower(), str(str_2).lower())
 
     return 1 - similarity > distance / min(len(str_1), len(str_2))
 
