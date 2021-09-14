@@ -54,7 +54,6 @@ def load():
         data_dict = json.load(json_file)
 
 
-
 # save lists
 def save():
 
